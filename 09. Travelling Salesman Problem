@@ -1,0 +1,38 @@
+import itertools
+
+def calculate_distance(path, distance_matrix):
+    """Calculate the total distance of the given path based on the distance matrix."""
+    total_distance = 0
+    for i in range(len(path) - 1):
+        total_distance += distance_matrix[path[i]][path[i + 1]]
+    total_distance += distance_matrix[path[-1]][path[0]]  # Return to the starting point
+    return total_distance
+
+def travelling_salesman(distance_matrix):
+    """Solve the TSP problem using brute force."""
+    num_cities = len(distance_matrix)
+    shortest_path = None
+    min_distance = float('inf')
+
+    # Generate all permutations of cities (excluding the starting point to avoid duplicate cycles)
+    for perm in itertools.permutations(range(1, num_cities)):
+        path = (0,) + perm  # Start from city 0
+        current_distance = calculate_distance(path, distance_matrix)
+        if current_distance < min_distance:
+            min_distance = current_distance
+            shortest_path = path
+
+    return shortest_path, min_distance
+
+# Example distance matrix (symmetric TSP)
+distance_matrix = [
+    [0, 10, 15, 20],
+    [10, 0, 35, 25],
+    [15, 35, 0, 30],
+    [20, 25, 30, 0]
+]
+
+# Solve TSP
+shortest_path, min_distance = travelling_salesman(distance_matrix)
+print(f"The shortest path is: {shortest_path}")
+print(f"The minimum distance is: {min_distance}")
