@@ -1,0 +1,33 @@
+def dfs_iterative(graph, start):
+    visited = set()
+    stack = [start]
+
+    while stack:
+        # Pop a vertex from stack
+        node = stack.pop()
+
+        if node not in visited:
+            # Mark the node as visited
+            print(node, end=' ')
+            visited.add(node)
+
+            # Push all unvisited neighbors to the stack
+            for neighbor in reversed(graph[node]):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+
+# Example graph represented as an adjacency list
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F', 'G'],
+    'D': ['B'],
+    'E': ['B', 'H'],
+    'F': ['C'],
+    'G': ['C'],
+    'H': ['E']
+}
+
+# Perform DFS starting from node 'A'
+print("\nDFS Iterative Traversal:")
+dfs_iterative(graph, 'A')
