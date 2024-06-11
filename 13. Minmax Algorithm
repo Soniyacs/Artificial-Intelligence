@@ -1,0 +1,140 @@
+import math
+
+# Define the players
+HUMAN = -1
+COMP = 1
+
+# Define the board
+board = [
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0]
+]
+
+# Check for a win
+def evaluate(state):
+    if wins(state, COMP):
+        score = 1
+    elif wins(state, HUMAN):
+        score = -1
+    else:
+        score = 0
+    return score
+
+# Check if a player has won
+def wins(state, player):
+    win_state = [
+        [state[0][0], state[0][1], state[0][2]],
+        [state[1][0], state[1][1], state[1][2]],
+        [state[2][0], state[2][1], state[2][2]],
+        [state[0][0], state[1][0], state[2][0]],
+        [state[0][1], state[1][1], state[2][1]],
+        [state[0][2], state[1][2], state[2][2]],
+        [state[0][0], state[1][1], state[2][2]],
+        [state[2][0], state[1][1], state[0][2]],
+    ]
+    return [player, player, player] in win_state
+
+# Check for available moves
+def game_over(state):
+    return wins(state, HUMAN) or wins(state, COMP)
+
+# Get empty cells
+def empty_cells(state):
+    cells = []
+    for x, row in enumerate(state):
+        for y, cell in enumerate(row):
+            if cell == 0:
+                cells.append([x, y])
+    return cells
+
+# Check if a move is valid
+def valid_move(x, y):
+    if [x, y] in empty_cells(board):
+        return True
+    else:
+        return False
+
+# Set a move
+def set_move(x, y, player):
+    if valid_move(x, y):
+        board[x][y] = player
+        return True
+    else:
+        return False
+
+# Minimax algorithm
+def minimax(state, depth, player):
+    if player == COMP:
+        best = [-1, -1, -math.inf]
+    else:
+        best = [-1, -1, math.inf]
+
+    if depth == 0 or game_over(state):
+        score = evaluate(state)
+        return [-1, -1, score]
+
+    for cell in empty_cells(state):
+        x, y = cell
+        state[x][y] = player
+        score = minimax(state, depth - 1, -player)
+        state[x][y] = 0
+        score[0], score[1] = x, y
+
+        if player == COMP:
+            if score[2] > best[2]:
+                best = score  # Max value
+        else:
+            if score[2] < best[2]:
+                best = score  # Min value
+
+    return best
+
+# Print the board
+def print_board(state):
+    chars = {
+        -1: 'X',
+        1: 'O',
+        0: ' '
+    }
+    for row in state:
+        print('\n----------------')
+        for cell in row:
+            symbol = chars[cell]
+            print(f'| {symbol} |', end=' ')
+    print('\n----------------')
+
+# Main function to play the game
+def main():
+    while not game_over(board):
+        print_board(board)
+        depth = len(empty_cells(board))
+        if depth == 0 or game_over(board):
+            break
+        if depth % 2 == 0:
+            print('Computer turn')
+            move = minimax(board, depth, COMP)
+            set_move(move[0], move[1], COMP)
+        else:
+            print('Human turn')
+            move = [-1, -1]
+            while not valid_move(move[0], move[1]):
+                try:
+                    x = int(input('Enter X coordinate: '))
+                    y = int(input('Enter Y coordinate: '))
+                    move = [x, y]
+                except ValueError:
+                    print('Bad choice')
+            set_move(move[0], move[1], HUMAN)
+
+    if wins(board, HUMAN):
+        print('HUMAN wins!')
+    elif wins(board, COMP):
+        print('COMPUTER wins!')
+    else:
+        print('Draw!')
+
+    print_board(board)
+
+if __name__ == '__main__':
+    main()
