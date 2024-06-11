@@ -1,0 +1,17 @@
+% Predicate to check if a number is odd
+is_odd(Number) :- 
+    Number mod 2 =:= 1.
+
+% Base case: The sum of odd numbers in an empty list is 0
+sum_odd_numbers([], 0).
+
+% Recursive case: If the head of the list is odd, add it to the sum
+sum_odd_numbers([Head|Tail], Sum) :- 
+    is_odd(Head),
+    sum_odd_numbers(Tail, TailSum),
+    Sum is Head + TailSum.
+
+% Recursive case: If the head of the list is not odd, skip it
+sum_odd_numbers([Head|Tail], Sum) :- 
+    \+ is_odd(Head),
+    sum_odd_numbers(Tail, Sum).
