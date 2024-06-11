@@ -1,0 +1,59 @@
+class VacuumCleaner:
+    def __init__(self, environment):
+        self.environment = environment  # 2x2 grid
+        self.agent_position = (0, 0)    # starting position (top-left)
+
+    def clean(self):
+        print("Initial Environment:")
+        self.print_environment()
+
+        while not self.is_clean():
+            x, y = self.agent_position
+
+            if self.environment[x][y] == 1:
+                print(f"Cleaning cell {x}, {y}")
+                self.environment[x][y] = 0  # Clean the current cell
+
+            if self.move():
+                print(f"Moving to {self.agent_position}")
+
+        print("Environment after cleaning:")
+        self.print_environment()
+
+    def move(self):
+        x, y = self.agent_position
+
+        # Move logic to cover all cells
+        if y < 1:
+            self.agent_position = (x, y + 1)  # Move right
+        elif x < 1:
+            self.agent_position = (x + 1, y)  # Move down
+        elif y > 0:
+            self.agent_position = (x, y - 1)  # Move left
+        elif x > 0:
+            self.agent_position = (x - 1, y)  # Move up
+        else:
+            return False  # No more moves available
+
+        return True
+
+    def is_clean(self):
+        for row in self.environment:
+            for cell in row:
+                if cell == 1:
+                    return False
+        return True
+
+    def print_environment(self):
+        for row in self.environment:
+            print(row)
+        print()
+
+# Example environment: 1 represents dirty, 0 represents clean
+environment = [
+    [1, 0],
+    [1, 1]
+]
+
+vacuum = VacuumCleaner(environment)
+vacuum.clean()
