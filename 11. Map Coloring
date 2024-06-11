@@ -1,0 +1,79 @@
+class CSP:
+    def __init__(self, variables, domains, neighbors, constraints):
+        self.variables = variables
+        self.domains = domains
+        self.neighbors = neighbors
+        self.constraints = constraints
+        self.current_domains = None
+        self.assignments = {}
+
+    def assign(self, var, value, assignment):
+        assignment[var] = value
+        if self.current_domains:
+            self.current_domains[var] = [value]
+
+    def unassign(self, var, assignment):
+        if var in assignment:
+            if self.current_domains:
+                self.current_domains[var] = self.domains[var]
+            del assignment[var]
+
+    def nconflicts(self, var, value, assignment):
+        return sum(self.constraints(var, value, var2, assignment.get(var2))
+                   for var2 in self.neighbors[var] if var2 in assignment)
+
+    def forward_checking(self, var, value, assignment):
+        self.current_domains = {v: list(self.domains[v]) for v in self.variables}
+        for neighbor in self.neighbors[var]:
+            if neighbor not in assignment:
+                self.current_domains[neighbor] = [v for v in self.current_domains[neighbor] if v != value]
+
+    def consistent(self, var, assignment):
+        return all(self.constraints(var, assignment[var], var2, assignment.get(var2))
+                   for var2 in self.neighbors[var] if var2 in assignment)
+
+    def backtracking_search(self):
+        def backtrack(assignment):
+            if len(assignment) == len(self.variables):
+                return assignment
+
+            var = self.select_unassigned_variable(assignment)
+            for value in self.order_domain_values(var, assignment):
+                if self.nconflicts(var, value, assignment) == 0:
+                    self.assign(var, value, assignment)
+                    self.forward_checking(var, value, assignment)
+                    result = backtrack(assignment)
+                    if result:
+                        return result
+                    self.unassign(var, assignment)
+            return None
+
+        self.current_domains = {v: list(self.domains[v]) for v in self.variables}
+        return backtrack({})
+
+    def select_unassigned_variable(self, assignment):
+        unassigned = [v for v in self.variables if v not in assignment]
+        return min(unassigned, key=lambda var: len(self.current_domains[var]))
+
+    def order_domain_values(self, var, assignment):
+        return self.current_domains[var]
+
+def different_values_constraint(A, a, B, b):
+    return a != b
+
+# Map of Australia coloring problem
+variables = ['WA', 'NT', 'SA', 'Q', 'NSW', 'V', 'T']
+domains = {var: ['red', 'green', 'blue'] for var in variables}
+neighbors = {
+    'WA': ['NT', 'SA'],
+    'NT': ['WA', 'SA', 'Q'],
+    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
+    'Q': ['NT', 'SA', 'NSW'],
+    'NSW': ['Q', 'SA', 'V'],
+    'V': ['SA', 'NSW'],
+    'T': []
+}
+
+csp = CSP(variables, domains, neighbors, different_values_constraint)
+solution = csp.backtracking_search()
+print("Solution:", solution)
