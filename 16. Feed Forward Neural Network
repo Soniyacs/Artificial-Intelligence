@@ -1,0 +1,68 @@
+import numpy as np
+
+# Sigmoid activation function
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
+
+# Derivative of the sigmoid function for backpropagation
+def sigmoid_derivative(x):
+    return x * (1 - x)
+
+# Feedforward Neural Network class
+class FeedForwardNeuralNetwork:
+    def __init__(self, input_size, hidden_size, output_size):
+        # Initialize weights
+        self.input_size = input_size
+        self.hidden_size = hidden_size
+        self.output_size = output_size
+        self.weights_input_hidden = np.random.rand(self.input_size, self.hidden_size)
+        self.weights_hidden_output = np.random.rand(self.hidden_size, self.output_size)
+
+    def forward(self, inputs):
+        # Forward pass through the network
+        self.hidden_input = np.dot(inputs, self.weights_input_hidden)
+        self.hidden_output = sigmoid(self.hidden_input)
+        self.final_input = np.dot(self.hidden_output, self.weights_hidden_output)
+        self.final_output = sigmoid(self.final_input)
+        return self.final_output
+
+    def backward(self, inputs, expected_output, output):
+        # Calculate the error
+        error = expected_output - output
+        # Calculate the gradient for the output layer
+        d_output = error * sigmoid_derivative(output)
+        
+        # Calculate the error for the hidden layer
+        error_hidden_layer = d_output.dot(self.weights_hidden_output.T)
+        d_hidden_layer = error_hidden_layer * sigmoid_derivative(self.hidden_output)
+        
+        # Update the weights
+        self.weights_hidden_output += self.hidden_output.T.dot(d_output)
+        self.weights_input_hidden += inputs.T.dot(d_hidden_layer)
+
+    def train(self, inputs, expected_output, epochs=10000):
+        for epoch in range(epochs):
+            # Forward pass
+            output = self.forward(inputs)
+            # Backward pass and weight update
+            self.backward(inputs, expected_output, output)
+
+# Sample data (XOR problem)
+inputs = np.array([[0, 0], [0, 1], [1, 0], [1, 1]])
+expected_output = np.array([[0], [1], [1], [0]])
+
+# Define neural network structure
+input_size = 2
+hidden_size = 2
+output_size = 1
+
+# Initialize the neural network
+nn = FeedForwardNeuralNetwork(input_size, hidden_size, output_size)
+
+# Train the neural network
+nn.train(inputs, expected_output)
+
+# Test the neural network
+print("Predictions after training:")
+for input_data in inputs:
+    print(f"Input: {input_data}, Output: {nn.forward(input_data)}")
