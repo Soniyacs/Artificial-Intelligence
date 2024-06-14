@@ -1,0 +1,51 @@
+% Define an edge/3 predicate to represent the graph's edges
+edge(a, b, 4).
+edge(a, c, 3).
+edge(b, d, 5).
+edge(b, e, 12).
+edge(c, f, 8).
+edge(d, g, 2).
+edge(e, g, 3).
+edge(f, g, 7).
+
+% Define the goal node
+goal(g).
+
+% Define the heuristic/2 predicate to represent heuristic values
+heuristic(a, 7).
+heuristic(b, 6).
+heuristic(c, 5).
+heuristic(d, 4).
+heuristic(e, 2).
+heuristic(f, 3).
+heuristic(g, 0).
+
+% The Best First Search algorithm
+best_first_search(Start, Path) :-
+    heuristic(Start, H),
+    best_first_search_helper([(Start, H)], [], Path).
+
+best_first_search_helper([(Node, _)|_], Visited, [Node]) :-
+    goal(Node),
+    reverse(Visited, [_|Rest]),
+    append(Rest, [Node], Path).
+
+best_first_search_helper([(Node, _)|Rest], Visited, Path) :-
+    \+ goal(Node),
+    findall((Next, H),
+            (edge(Node, Next, _), \+ member(Next, Visited), heuristic(Next, H)),
+            Neighbors),
+    append(Rest, Neighbors, NewFrontier),
+    sort(2, @=<, NewFrontier, SortedNewFrontier),
+    best_first_search_helper(SortedNewFrontier, [Node|Visited], Path).
+
+% Utility predicate to reverse a list
+reverse(List, Reversed) :-
+    reverse(List, [], Reversed).
+
+reverse([], Reversed, Reversed).
+reverse([Head|Tail], Acc, Reversed) :-
+    reverse(Tail, [Head|Acc], Reversed).
+
+% Query to run the Best First Search algorithm
+?- best_first_search(a, Path).
