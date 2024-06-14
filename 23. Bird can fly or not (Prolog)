@@ -1,0 +1,27 @@
+% Define facts about birds
+bird(eagle).
+bird(penguin).
+bird(sparrow).
+bird(ostrich).
+bird(kiwi).
+
+% Define which birds cannot fly
+cannot_fly(penguin).
+cannot_fly(ostrich).
+cannot_fly(kiwi).
+
+% Rule to determine if a bird can fly
+can_fly(Bird) :-
+    bird(Bird),
+    \+ cannot_fly(Bird).
+
+% Rule to determine if a bird cannot fly
+cannot_fly(Bird) :-
+    bird(Bird),
+    \+ can_fly(Bird).
+
+% Queries to test the program
+% ?- can_fly(eagle).
+% ?- can_fly(penguin).
+% ?- cannot_fly(ostrich).
+% ?- cannot_fly(sparrow).
