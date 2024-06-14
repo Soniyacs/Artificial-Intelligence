@@ -1,0 +1,45 @@
+% Facts: Symptoms for each disease
+symptom(flu, fever).
+symptom(flu, cough).
+symptom(flu, sore_throat).
+symptom(flu, headache).
+symptom(cold, cough).
+symptom(cold, sore_throat).
+symptom(cold, runny_nose).
+symptom(cold, sneezing).
+symptom(covid19, fever).
+symptom(covid19, cough).
+symptom(covid19, sore_throat).
+symptom(covid19, difficulty_breathing).
+symptom(covid19, loss_of_taste).
+symptom(covid19, loss_of_smell).
+symptom(malaria, fever).
+symptom(malaria, chills).
+symptom(malaria, headache).
+symptom(malaria, sweating).
+symptom(malaria, nausea).
+
+% Rules: Diagnose disease based on symptoms
+diagnose(Disease) :-
+    symptom(Disease, Symptom1),
+    symptom(Disease, Symptom2),
+    symptom(Disease, Symptom3),
+    write('The patient might have '), write(Disease), write(' with symptoms: '), write(Symptom1), write(', '), write(Symptom2), write(', '), write(Symptom3), nl.
+
+% User interaction: Ask for symptoms and diagnose
+start_diagnosis :-
+    write('Enter the first symptom: '), read(Symptom1), nl,
+    write('Enter the second symptom: '), read(Symptom2), nl,
+    write('Enter the third symptom: '), read(Symptom3), nl,
+    diagnose_disease(Symptom1, Symptom2, Symptom3).
+
+% Diagnose based on three symptoms
+diagnose_disease(Symptom1, Symptom2, Symptom3) :-
+    symptom(Disease, Symptom1),
+    symptom(Disease, Symptom2),
+    symptom(Disease, Symptom3),
+    write('Based on the symptoms, the diagnosis might be: '), write(Disease), nl;
+    write('No diagnosis could be made with the provided symptoms.'), nl.
+
+% Entry point for the program
+:- initialization(start_diagnosis).
