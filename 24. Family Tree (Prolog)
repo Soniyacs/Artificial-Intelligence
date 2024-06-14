@@ -1,0 +1,88 @@
+% Define family relationships
+% parent(Parent, Child).
+
+parent(john, mary).
+parent(john, mike).
+parent(susan, mary).
+parent(susan, mike).
+parent(mary, anna).
+parent(mary, tom).
+parent(mike, lucy).
+parent(mike, sam).
+
+% Define gender
+% male(Person).
+% female(Person).
+
+male(john).
+male(mike).
+male(tom).
+male(sam).
+female(susan).
+female(mary).
+female(anna).
+female(lucy).
+
+% Define rules for relationships
+
+% Father rule
+father(F, C) :- 
+    parent(F, C), 
+    male(F).
+
+% Mother rule
+mother(M, C) :- 
+    parent(M, C), 
+    female(M).
+
+% Sibling rule
+sibling(X, Y) :- 
+    parent(P, X), 
+    parent(P, Y), 
+    X \= Y.
+
+% Brother rule
+brother(B, S) :- 
+    sibling(B, S), 
+    male(B).
+
+% Sister rule
+sister(S, B) :- 
+    sibling(S, B), 
+    female(S).
+
+% Grandparent rule
+grandparent(GP, GC) :- 
+    parent(GP, P), 
+    parent(P, GC).
+
+% Grandfather rule
+grandfather(GF, GC) :- 
+    grandparent(GF, GC), 
+    male(GF).
+
+% Grandmother rule
+grandmother(GM, GC) :- 
+    grandparent(GM, GC), 
+    female(GM).
+
+% Grandchild rule
+grandchild(GC, GP) :- 
+    grandparent(GP, GC).
+
+% Aunt rule
+aunt(A, N) :- 
+    parent(P, N), 
+    sibling(A, P), 
+    female(A).
+
+% Uncle rule
+uncle(U, N) :- 
+    parent(P, N), 
+    sibling(U, P), 
+    male(U).
+
+% Cousin rule
+cousin(C1, C2) :- 
+    parent(P1, C1), 
+    parent(P2,
