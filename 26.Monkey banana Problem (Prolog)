@@ -1,0 +1,25 @@
+% Define the initial state and the goal state
+initial(state(at_door, at_door, on_floor, has_not)).
+goal(state(_, _, _, has)).
+
+% Define the possible actions and their effects
+move(state(at_door, Chair, on_floor, Has), goto_middle, state(at_middle, Chair, on_floor, Has)).
+move(state(at_middle, Chair, on_floor, Has), goto_door, state(at_door, Chair, on_floor, Has)).
+move(state(at_middle, Chair, on_floor, Has), goto_bananas, state(at_bananas, Chair, on_floor, Has)).
+move(state(at_bananas, Chair, on_floor, Has), goto_middle, state(at_middle, Chair, on_floor, Has)).
+move(state(Pos, Pos, on_floor, Has), climb_chair, state(Pos, Pos, on_chair, Has)).
+move(state(Pos, Pos, on_chair, has_not), grab_bananas, state(Pos, Pos, on_chair, has)).
+move(state(at_middle, at_door, on_floor, Has), push_chair_to_middle, state(at_middle, at_middle, on_floor, Has)).
+move(state(at_door, at_middle, on_floor, Has), push_chair_to_door, state(at_door, at_door, on_floor, Has)).
+move(state(at_bananas, at_middle, on_floor, Has), push_chair_to_bananas, state(at_bananas, at_bananas, on_floor, Has)).
+
+% Define a plan to reach the goal state from the initial state
+plan(State, [], State) :- goal(State).
+plan(State1, [Action|Rest], FinalState) :-
+    move(State1, Action, State2),
+    plan(State2, Rest, FinalState).
+
+% Entry point to find the solution
+solve(Plan) :-
+    initial(State),
+    plan(State, Plan, _).
