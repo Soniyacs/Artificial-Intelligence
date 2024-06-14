@@ -1,0 +1,20 @@
+% Facts
+parent(john, mary).
+parent(mary, susan).
+parent(mary, tom).
+parent(susan, peter).
+
+% Rules
+grandparent(X, Y) :- parent(X, Z), parent(Z, Y).
+ancestor(X, Y) :- parent(X, Y).
+ancestor(X, Y) :- parent(X, Z), ancestor(Z, Y).
+
+% Queries
+% To check if john is a grandparent of susan
+% ?- grandparent(john, susan).
+
+% To find all ancestors of peter
+% ?- ancestor(X, peter).
+
+% To check if there exists an ancestor relationship between john and tom
+% ?- ancestor(john, tom).
