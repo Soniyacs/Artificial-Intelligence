@@ -1,0 +1,19 @@
+% Facts about dietary recommendations based on diseases
+diet_for_disease(diabetes, [vegetables, whole_grains, lean_proteins, fruits, nuts, seeds]).
+diet_for_disease(hypertension, [low_sodium, high_potassium, vegetables, fruits, whole_grains, lean_proteins, dairy_products]).
+diet_for_disease(cardiovascular_disease, [vegetables, fruits, whole_grains, lean_proteins, nuts, seeds, omega_3_fatty_acids]).
+diet_for_disease(obesity, [low_calorie, vegetables, fruits, whole_grains, lean_proteins, high_fiber]).
+diet_for_disease(anemia, [iron_rich_foods, vitamin_c_rich_foods, lean_meats, leafy_greens, legumes]).
+diet_for_disease(celiac_disease, [gluten_free_grains, vegetables, fruits, lean_proteins, dairy_products, nuts, seeds]).
+diet_for_disease(kidney_disease, [low_sodium, low_potassium, low_phosphorus, vegetables, fruits, lean_proteins, dairy_products]).
+
+% Rule to suggest diet based on disease
+suggest_diet(Disease, Diet) :-
+    diet_for_disease(Disease, Diet).
+
+% Sample queries to suggest diet based on disease
+% ?- suggest_diet(diabetes, Diet).
+% Diet = [vegetables, whole_grains, lean_proteins, fruits, nuts, seeds].
+
+% ?- suggest_diet(hypertension, Diet).
+% Diet = [low_sodium, high_potassium, vegetables, fruits, whole_grains, lean_proteins, dairy_products].
