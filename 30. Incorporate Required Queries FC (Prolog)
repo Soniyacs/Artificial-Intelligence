@@ -1,0 +1,47 @@
+% Facts
+fact(raining).
+fact(sprinklers_on).
+
+% Rules
+rule(wet_grass, [raining]).
+rule(wet_grass, [sprinklers_on]).
+rule(muddy_garden, [wet_grass, raining]).
+
+% Forward chaining mechanism
+forward_chain :-
+    findall(R, rule(R, _), Rules),
+    forward_chain(Rules).
+
+forward_chain([]).
+forward_chain([R|Rules]) :-
+    apply_rule(R),
+    forward_chain(Rules).
+
+apply_rule(R) :-
+    rule(R, Conditions),
+    check_conditions(Conditions),
+    \+ fact(R),
+    assert(fact(R)),
+    write('New fact derived: '), write(R), nl,
+    !.
+
+apply_rule(_).
+
+check_conditions([]).
+check_conditions([C|Conditions]) :-
+    fact(C),
+    check_conditions(Conditions).
+
+% Querying inferred facts
+query_fact(F) :-
+    (   fact(F)
+    ->  write(F), write(' is true.'), nl
+    ;   write(F), write(' is false.'), nl
+    ).
+
+% Running the forward chaining process and querying facts
+run_forward_chaining :-
+    forward_chain,
+    write('Final inferred facts: '), nl,
+    findall(F, fact(F), Facts),
+    write(Facts), nl.
